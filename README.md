@@ -10,6 +10,8 @@ Requirements: Docker and Docker Compose.
 ./dev.sh
 ```
 
+Frontend source is mounted into Docker, so edits under `frontend/` reload automatically. Rebuild only after changing dependencies or Docker configuration.
+
 Open:
 
 - Frontend: http://localhost:4200
