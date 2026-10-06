@@ -23,6 +23,13 @@ main, section {
 
 h1 { color: #172033; font-size: 28px; margin: 0; }
 
+.dashboard-grid { display: grid; gap: 18px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 24px; }
+.dashboard-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; color: #172033; display: grid; gap: 8px; padding: 22px; text-decoration: none; transition: box-shadow .15s, transform .15s; }
+.dashboard-card:hover { box-shadow: 0 8px 24px rgba(15, 23, 42, .1); transform: translateY(-2px); }
+.dashboard-card span { color: #475569; font-weight: 600; }
+.dashboard-card strong { font-size: 34px; line-height: 1; }
+.dashboard-card small { color: #2563eb; }
+
 .resource-page form {
   align-items: center;
   display: grid;
@@ -74,4 +81,9 @@ td button:hover { background: #b91c1c; }
   mat-toolbar > button:not(.menu-toggle) { margin-left: 8px; }
   main, section { margin: 24px auto; padding: 0 16px; }
   table { display: block; overflow-x: auto; white-space: nowrap; }
+  .dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
 }
