@@ -1,0 +1,67 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+:root { color: #172033; background: #f4f7fb; font: 15px/1.5 Inter, ui-sans-serif, system-ui, sans-serif; }
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+mat-toolbar { justify-content: center; }
+mat-toolbar nav { display: flex; flex-wrap: wrap; margin-left: 16px; }
+mat-toolbar a { color: #fff; }
+mat-toolbar button { margin-left: 8px; }
+
+main, section {
+  margin: 32px auto;
+  max-width: 1100px;
+  padding: 0 24px;
+}
+
+h1 { color: #172033; font-size: 28px; margin: 0; }
+
+.resource-page form {
+  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.resource-page form mat-form-field { width: 100%; }
+.resource-page form > button[type="submit"] { height: 56px; justify-self: start; }
+
+label { color: #475569; display: grid; gap: 6px; }
+table {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-collapse: separate;
+  border-radius: 12px;
+  border-spacing: 0;
+  overflow: hidden;
+  width: 100%;
+}
+th, td { border-bottom: 1px solid #e2e8f0; padding: 13px 16px; text-align: left; }
+th { background: #eff6ff; color: #1e3a8a; font-size: 13px; text-transform: capitalize; }
+tr:last-child td { border-bottom: 0; }
+td button { background: #dc2626; min-height: 32px; padding: 5px 10px; }
+td button:hover { background: #b91c1c; }
+.page-heading { align-items: center; display: flex; justify-content: space-between; margin-bottom: 20px; }
+.page-heading h1 { margin-right: auto; }
+.page-heading > button { margin-left: 16px; }
+.add-button { --mdc-filled-button-label-text-color: #fff !important; color: #fff !important; opacity: 1 !important; }
+.add-button .mdc-button__label { color: #fff !important; opacity: 1 !important; }
+.page-heading span { color: #64748b; }
+.resource-page mat-card { margin-bottom: 24px; }
+.resource-page table { width: 100%; }
+.edit-button { background: #16a34a !important; color: #fff !important; }
+.edit-button:hover { background: #15803d !important; }
+.delete-button { background: #dc2626 !important; color: #fff !important; }
+.delete-button:hover { background: #b91c1c !important; }
+.edit-button + .delete-button { margin-left: 8px; }
+.error { color: #b91c1c; }
+
+@media (max-width: 640px) {
+  mat-toolbar { height: auto; min-height: 64px; padding: 12px 16px; }
+  mat-toolbar { justify-content: flex-start; }
+  mat-toolbar nav { margin-left: 8px; }
+  main, section { margin: 24px auto; padding: 0 16px; }
+  table { display: block; overflow-x: auto; white-space: nowrap; }
+}
