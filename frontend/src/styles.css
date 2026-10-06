@@ -29,6 +29,11 @@ h1 { color: #172033; font-size: 28px; margin: 0; }
 .dashboard-card span { color: #475569; font-weight: 600; }
 .dashboard-card strong { font-size: 34px; line-height: 1; }
 .dashboard-card small { color: #2563eb; }
+.analytics-grid { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 18px; }
+.analytics-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px; }
+.analytics-card h2 { font-size: 18px; margin: 0 0 20px; }
+.analytics-chart { height: 260px; position: relative; }
+.analytics-chart canvas { height: 100% !important; width: 100% !important; }
 
 .resource-page form {
   align-items: center;
@@ -82,6 +87,7 @@ td button:hover { background: #b91c1c; }
   main, section { margin: 24px auto; padding: 0 16px; }
   table { display: block; overflow-x: auto; white-space: nowrap; }
   .dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .analytics-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
