@@ -5,10 +5,15 @@
 * { box-sizing: border-box; }
 body { margin: 0; }
 
-mat-toolbar { justify-content: center; }
-mat-toolbar nav { display: flex; flex-wrap: wrap; margin-left: 16px; }
-mat-toolbar a { color: #fff; }
-mat-toolbar button { margin-left: 8px; }
+mat-toolbar { background: #fff !important; color: #172033 !important; gap: 16px; justify-content: space-between; padding: 4px 16px; position: relative; }
+mat-toolbar .brand { align-items: center; display: flex; flex: 0 0 150px; height: 56px; overflow: hidden; }
+mat-toolbar .brand img { height: 150px; max-width: none; width: 150px; }
+mat-toolbar nav { display: flex; flex: 1; gap: 4px; justify-content: center; min-width: 0; }
+mat-toolbar nav a { border-radius: 8px; color: #334155 !important; font-size: 18px; font-weight: 600; line-height: 44px; padding: 0 14px; text-decoration: none; white-space: nowrap; }
+mat-toolbar nav a:hover { background: #eff6ff; color: #2563eb !important; }
+mat-toolbar nav a.active { background: #dbeafe; color: #1d4ed8 !important; }
+mat-toolbar button { flex: 0 0 auto; margin-left: 8px; }
+mat-toolbar button.menu-toggle { display: none; }
 
 main, section {
   margin: 32px auto;
@@ -58,10 +63,15 @@ td button:hover { background: #b91c1c; }
 .edit-button + .delete-button { margin-left: 8px; }
 .error { color: #b91c1c; }
 
-@media (max-width: 640px) {
-  mat-toolbar { height: auto; min-height: 64px; padding: 12px 16px; }
-  mat-toolbar { justify-content: flex-start; }
-  mat-toolbar nav { margin-left: 8px; }
+@media (max-width: 900px) {
+  mat-toolbar, mat-toolbar.mat-toolbar-single-row { flex-wrap: nowrap; height: 64px; min-height: 64px; padding: 8px 12px; }
+  mat-toolbar .brand { flex-basis: 140px; }
+  mat-toolbar .brand img { height: 140px; width: 140px; }
+  mat-toolbar nav { background: #fff; border-radius: 10px; box-shadow: 0 8px 20px rgba(15, 23, 42, .14); display: none; flex-direction: column; gap: 2px; left: 12px; margin: 0; padding: 8px; position: absolute; right: 12px; top: 60px; z-index: 10; }
+  mat-toolbar nav.open { display: flex; }
+  mat-toolbar nav a { font-size: 16px; padding: 0 12px; }
+  mat-toolbar button.menu-toggle { background: #eff6ff; border: 0; border-radius: 8px; color: #1d4ed8; display: inline-flex; font: inherit; font-size: 14px; font-weight: 600; line-height: 40px; margin-left: auto; padding: 0 12px; }
+  mat-toolbar > button:not(.menu-toggle) { margin-left: 8px; }
   main, section { margin: 24px auto; padding: 0 16px; }
   table { display: block; overflow-x: auto; white-space: nowrap; }
 }

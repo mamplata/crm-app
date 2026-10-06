@@ -17,21 +17,26 @@ import { AuthService } from './app/auth.service';
   imports: [MatButtonModule, MatToolbarModule, RouterLink, RouterOutlet],
   template: `
     <mat-toolbar color="primary">
-      <span>CRM</span>
-      <nav>
-        <a mat-button routerLink="/dashboard">Dashboard</a>
-        <a mat-button routerLink="/crm/leads">Leads</a>
-        <a mat-button routerLink="/crm/companies">Companies</a>
-        <a mat-button routerLink="/crm/contacts">Contacts</a>
-        <a mat-button routerLink="/crm/deals">Deals</a>
-        <a mat-button routerLink="/crm/tasks">Tasks</a>
+      <a class="brand" routerLink="/" aria-label="CRM home">
+        <img src="assets/logo.png" alt="CRM">
+      </a>
+      <nav [class.open]="menuOpen">
+        <a routerLink="/dashboard" routerLinkActive="active" (click)="menuOpen = false">Dashboard</a>
+        <a routerLink="/crm/leads" routerLinkActive="active" (click)="menuOpen = false">Leads</a>
+        <a routerLink="/crm/companies" routerLinkActive="active" (click)="menuOpen = false">Companies</a>
+        <a routerLink="/crm/contacts" routerLinkActive="active" (click)="menuOpen = false">Contacts</a>
+        <a routerLink="/crm/deals" routerLinkActive="active" (click)="menuOpen = false">Deals</a>
+        <a routerLink="/crm/tasks" routerLinkActive="active" (click)="menuOpen = false">Tasks</a>
       </nav>
+      <button class="menu-toggle" type="button" (click)="menuOpen = !menuOpen" [attr.aria-expanded]="menuOpen">☰ Menu</button>
       <button mat-flat-button color="warn" type="button" (click)="logout()">Log out</button>
     </mat-toolbar>
     <main><router-outlet /></main>
   `,
 })
 class AppComponent {
+  menuOpen = false;
+
   constructor(private readonly auth: AuthService, private readonly router: Router) {}
 
   logout(): void {
