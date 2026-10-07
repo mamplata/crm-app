@@ -43,11 +43,13 @@ CREATE TABLE IF NOT EXISTS leads (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255),
     message TEXT NOT NULL,
-    status VARCHAR(30) NOT NULL DEFAULT 'NEW' CHECK (status IN ('NEW', 'QUALIFIED', 'DISQUALIFIED', 'CONVERTED')),
+    status VARCHAR(30) NOT NULL DEFAULT 'NEW' CHECK (status IN ('NEW', 'NEEDS_REVIEW', 'QUALIFIED', 'DISQUALIFIED', 'CONVERTED')),
     intent VARCHAR(100),
+    industry VARCHAR(30),
     priority VARCHAR(20) CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH')),
     summary TEXT,
     confidence NUMERIC(4,3) CHECK (confidence IS NULL OR (confidence >= 0 AND confidence <= 1)),
+    ai_original JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

@@ -23,6 +23,14 @@ main, section {
 
 h1 { color: #172033; font-size: 28px; margin: 0; }
 
+.login-page { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 12px 32px rgba(15, 23, 42, .08); margin: 72px auto; max-width: 420px; padding: 32px; }
+.login-page form { display: grid; gap: 8px; margin-top: 24px; }
+.login-page input { border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; min-height: 42px; padding: 8px 10px; }
+.login-page input:focus { border-color: #2563eb; outline: 2px solid #bfdbfe; }
+.login-page button { background: #2563eb; border: 0; border-radius: 6px; color: #fff; cursor: pointer; font: inherit; font-weight: 600; margin-top: 12px; min-height: 42px; }
+.login-page button:hover { background: #1d4ed8; }
+.login-page p { color: #b91c1c; margin: 4px 0 0; }
+
 .dashboard-grid { display: grid; gap: 18px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 24px; }
 .dashboard-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; color: #172033; display: grid; gap: 8px; padding: 22px; text-decoration: none; transition: box-shadow .15s, transform .15s; }
 .dashboard-card:hover { box-shadow: 0 8px 24px rgba(15, 23, 42, .1); transform: translateY(-2px); }
@@ -60,6 +68,7 @@ th { background: #eff6ff; color: #1e3a8a; font-size: 13px; text-transform: capit
 tr:last-child td { border-bottom: 0; }
 td button { background: #dc2626; min-height: 32px; padding: 5px 10px; }
 td button:hover { background: #b91c1c; }
+.resource-page td:last-child { white-space: nowrap; }
 .page-heading { align-items: center; display: flex; justify-content: space-between; margin-bottom: 20px; }
 .page-heading h1 { margin-right: auto; }
 .page-heading > button { margin-left: 16px; }

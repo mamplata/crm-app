@@ -5,15 +5,17 @@ import { AuthService } from './auth.service';
 @Component({
   standalone: true,
   template: `
-    <main>
+    <section class="login-page">
       <h1>CRM login</h1>
       <form (submit)="login($event)">
-        <label>Email <input type="email" [value]="email" (input)="email = inputValue($event)" required></label>
-        <label>Password <input type="password" [value]="password" (input)="password = inputValue($event)" required></label>
+        <label for="email">Email</label>
+        <input id="email" type="email" [value]="email" (input)="email = inputValue($event)" required>
+        <label for="password">Password</label>
+        <input id="password" type="password" [value]="password" (input)="password = inputValue($event)" required>
         <button type="submit">Log in</button>
         @if (error) { <p>{{ error }}</p> }
       </form>
-    </main>
+    </section>
   `,
 })
 export class LoginComponent {
@@ -30,10 +32,9 @@ export class LoginComponent {
     this.error = '';
     try {
       await this.auth.login(this.email, this.password);
-      await this.router.navigateByUrl('/');
+      await this.router.navigateByUrl('/dashboard');
     } catch {
       this.error = 'Invalid email or password.';
     }
   }
 }
-

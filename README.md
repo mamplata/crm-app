@@ -19,6 +19,14 @@ Open:
 - AI health: http://localhost:8000/health
 - n8n: http://localhost:5678
 
+Set `N8N_WEBHOOK_URL` in `.env` to the n8n webhook URL. Lead creation stores a
+`lead.created` event and retries delivery up to three times. Failed events can
+be retried with `POST /api/webhook-events/{id}?action=retry`.
+Leads below `CLASSIFICATION_REVIEW_THRESHOLD` (default `0.7`) appear in the
+Angular Review queue, with the original AI result preserved in `ai_original`.
+Qualified leads can be synced with `POST /api/leads/{id}?action=hubspot-sync`.
+HubSpot rate limits and temporary server failures retry up to three times.
+
 ## Project structure
 
 - `frontend/` — Angular application

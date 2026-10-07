@@ -11,28 +11,33 @@ export class CrmService {
 
   constructor(private readonly api: ApiService) {}
 
-  async list(resource: string): Promise<CrmList> {
-    const cached = this.cache.get(resource);
+  async list(resource: string, params: Record<string, string> = {}): Promise<CrmList> {
+    const cacheKey = `${resource}?${new URLSearchParams(params).toString()}`;
+    const cached = this.cache.get(cacheKey);
     if (cached && cached.expires > Date.now()) return cached.value;
-    const value = await firstValueFrom(this.api.get<CrmList>(resource, { per_page: '50', direction: 'DESC' }));
-    this.cache.set(resource, { value, expires: Date.now() + 30_000 });
+    const value = await firstValueFrom(this.api.get<CrmList>(resource, { per_page: '50', direction: 'DESC', ...params }));
+    this.cache.set(cacheKey, { value, expires: Date.now() + 30_000 });
     return value;
   }
 
   async create(resource: string, value: object): Promise<CrmItem> {
     const response = await firstValueFrom(this.api.post<{ item: CrmItem }>(resource, value));
-    this.cache.delete(resource);
+    this.clearCache(resource);
     return response.item;
   }
 
   async update(resource: string, id: string, value: object): Promise<CrmItem> {
     const response = await firstValueFrom(this.api.patch<{ item: CrmItem }>(`${resource}/${id}`, value));
-    this.cache.delete(resource);
+    this.clearCache(resource);
     return response.item;
   }
 
   async remove(resource: string, id: string): Promise<void> {
     await firstValueFrom(this.api.delete(`${resource}/${id}`));
-    this.cache.delete(resource);
+    this.clearCache(resource);
+  }
+
+  private clearCache(resource: string): void {
+    for (const key of this.cache.keys()) if (key.startsWith(`${resource}?`)) this.cache.delete(key);
   }
 }

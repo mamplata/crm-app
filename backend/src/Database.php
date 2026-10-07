@@ -40,5 +40,7 @@ final class Database
         SQL);
         $this->connection->exec(file_get_contents(dirname(__DIR__) . '/migrations/001_crm.sql'));
         $this->connection->exec(file_get_contents(dirname(__DIR__) . '/migrations/002_demo.sql'));
+        $this->connection->exec(file_get_contents(dirname(__DIR__) . '/migrations/003_automation.sql'));
+        $this->connection->exec(file_get_contents(dirname(__DIR__) . '/migrations/004_hubspot.sql'));
     }
 }

@@ -117,9 +117,9 @@ Acceptance:
 # Milestone 5 — Automation Domain
 
 Create:
-- [ ] AutomationRun entity.
-- [ ] WebhookEvent entity.
-- [ ] IntegrationConnection entity.
+- [x] AutomationRun entity.
+- [x] WebhookEvent entity.
+- [x] IntegrationConnection entity.
 
 AutomationRun fields should include:
 - id
@@ -142,13 +142,13 @@ Acceptance:
 
 # Milestone 6 — Lead Created Webhook
 
-- [ ] Create event payload schema.
-- [ ] Generate unique event ID.
-- [ ] Send webhook to n8n.
-- [ ] Store WebhookEvent.
-- [ ] Implement retry behavior.
-- [ ] Implement idempotency protection.
-- [ ] Tests.
+- [x] Create event payload schema.
+- [x] Generate unique event ID.
+- [x] Send webhook to n8n.
+- [x] Store WebhookEvent.
+- [x] Implement retry behavior.
+- [x] Implement idempotency protection.
+- [x] Tests.
 
 Acceptance:
 Creating a lead causes one logical `lead.created` event even if delivery is retried.
@@ -166,9 +166,9 @@ Workflow:
 6. Continue to external integrations.
 7. Record success/failure.
 
-- [ ] Export workflow JSON into repository.
-- [ ] Document required n8n credentials/env.
-- [ ] Add error branch.
+- [x] Export workflow JSON into repository.
+- [x] Document required n8n credentials/env.
+- [x] Add error branch.
 
 Acceptance:
 Lead creation visibly produces an n8n execution.
@@ -178,15 +178,15 @@ Lead creation visibly produces an n8n execution.
 # Milestone 8 — Local AI Classifier
 
 Python service:
-- [ ] `/health`.
-- [ ] `/classify-lead`.
-- [ ] Ollama client.
-- [ ] strict classifier prompt.
-- [ ] JSON schema validation.
-- [ ] controlled enums.
-- [ ] timeout.
-- [ ] malformed output handling.
-- [ ] tests.
+- [x] `/health`.
+- [x] `/classify-lead`.
+- [x] Ollama client.
+- [x] strict classifier prompt.
+- [x] JSON schema validation.
+- [x] controlled enums.
+- [x] timeout.
+- [x] malformed output handling.
+- [x] tests.
 
 Classifier output:
 - intent
@@ -202,11 +202,11 @@ A representative fixture set can be classified without manual prompt editing.
 
 # Milestone 9 — Human Review
 
-- [ ] Configure confidence threshold.
-- [ ] Mark uncertain classification as NEEDS_REVIEW.
-- [ ] Add Angular review queue.
-- [ ] Allow user to correct classification.
-- [ ] Store original AI output and corrected value.
+- [x] Configure confidence threshold.
+- [x] Mark uncertain classification as NEEDS_REVIEW.
+- [x] Add Angular review queue.
+- [x] Allow user to correct classification.
+- [x] Store original AI output and corrected value.
 
 Acceptance:
 Low-confidence model output never automatically drives high-impact workflow steps.
@@ -215,14 +215,14 @@ Low-confidence model output never automatically drives high-impact workflow step
 
 # Milestone 10 — HubSpot Integration
 
-- [ ] Create HubSpot developer/free account integration configuration.
-- [ ] Implement API client.
-- [ ] Contact sync.
-- [ ] Company sync.
-- [ ] Deal sync.
-- [ ] Store external IDs.
-- [ ] Handle rate limits/errors.
-- [ ] Log integration attempts.
+- [x] Create HubSpot developer/free account integration configuration.
+- [x] Implement API client.
+- [x] Contact sync.
+- [x] Company sync.
+- [x] Deal sync.
+- [x] Store external IDs.
+- [x] Handle rate limits/errors.
+- [x] Log integration attempts.
 
 Acceptance:
 A qualified CRM lead can create/update corresponding HubSpot records.

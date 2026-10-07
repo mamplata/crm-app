@@ -1,0 +1,89 @@
+{
+  "id": "crm-lead-created",
+  "name": "CRM - Lead Created",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-created-v2",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "lead-webhook",
+      "name": "Lead created",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [260, 300],
+      "webhookId": "lead-created"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const event = $json.body ?? $json;\nconst lead = event.data?.lead;\nif (event.type !== 'lead.created' || !lead?.id || !lead?.message) throw new Error('Invalid lead.created payload.');\nreturn { json: { event, lead } };"
+      },
+      "id": "validate-event",
+      "name": "Validate event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://ai:8000/classify-lead",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.lead) }}",
+        "options": {}
+      },
+      "id": "classify-lead",
+      "name": "Classify lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [740, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const result = $json;\nconst priorities = ['LOW', 'MEDIUM', 'HIGH'];\nconst industries = ['SAAS', 'SERVICES', 'RETAIL', 'MANUFACTURING', 'HEALTHCARE', 'FINANCE', 'REAL_ESTATE', 'EDUCATION', 'OTHER'];\nif (!result.intent || !priorities.includes(result.priority) || !industries.includes(result.industry) || typeof result.summary !== 'string' || !result.summary.trim() || typeof result.confidence !== 'number' || result.confidence < 0 || result.confidence > 1) throw new Error('Invalid classifier response.');\nconst lead = $('Validate event').first().json.lead;\nreturn { json: { lead_id: lead.id, result } };"
+      },
+      "id": "validate-classifier",
+      "name": "Validate classifier result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [980, 300]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ 'http://backend:8000/api/leads/' + $json.lead_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "={{ 'Bearer ' + $env.CRM_API_TOKEN }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.result) }}",
+        "options": {}
+      },
+      "id": "update-crm",
+      "name": "Update CRM lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1220, 300]
+    }
+  ],
+  "connections": {
+    "Lead created": { "main": [[{ "node": "Validate event", "type": "main", "index": 0 }]] },
+    "Validate event": { "main": [[{ "node": "Classify lead", "type": "main", "index": 0 }]] },
+    "Classify lead": { "main": [[{ "node": "Validate classifier result", "type": "main", "index": 0 }]] },
+    "Validate classifier result": { "main": [[{ "node": "Update CRM lead", "type": "main", "index": 0 }]] }
+  },
+  "active": true,
+  "settings": { "executionOrder": "v1" },
+  "versionId": "crm-lead-created-v1",
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

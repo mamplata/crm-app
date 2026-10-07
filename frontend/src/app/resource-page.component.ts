@@ -6,7 +6,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
+import { firstValueFrom } from 'rxjs';
 import { CrmItem, CrmList, CrmService } from './crm.service';
+import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { ResourceFormDialogComponent } from './resource-form-dialog.component';
 
 type ResourceConfig = { title: string; fields: string[]; createFields?: string[] };
@@ -14,7 +16,8 @@ type ResourceConfig = { title: string; fields: string[]; createFields?: string[]
 const CONFIG: Record<string, ResourceConfig> = {
   companies: { title: 'Companies', fields: ['name', 'email', 'phone'], createFields: ['name', 'email', 'phone'] },
   contacts: { title: 'Contacts', fields: ['first_name', 'last_name', 'email', 'phone'], createFields: ['first_name', 'last_name', 'email', 'phone'] },
-  leads: { title: 'Leads', fields: ['name', 'email', 'message', 'status', 'priority'], createFields: ['name', 'email', 'message'] },
+  leads: { title: 'Leads', fields: ['name', 'email', 'message', 'status', 'priority', 'industry'], createFields: ['name', 'email', 'message'] },
+  'review-queue': { title: 'Review queue', fields: ['name', 'message', 'status', 'priority', 'industry', 'intent', 'summary', 'confidence'] },
   deals: { title: 'Deals', fields: ['name', 'amount', 'status', 'pipeline_stage_id'], createFields: ['name', 'amount', 'pipeline_stage_id'] },
   pipelines: { title: 'Pipelines', fields: ['name'], createFields: ['name'] },
   'pipeline-stages': { title: 'Pipeline stages', fields: ['name', 'position'] },
@@ -84,7 +87,9 @@ export class ResourcePageComponent implements OnInit {
     this.loading = true;
     this.error = '';
     try {
-      this.items = (await this.crm.list(this.resource)).items;
+      const apiResource = this.resource === 'review-queue' ? 'leads' : this.resource;
+      const params: Record<string, string> = this.resource === 'review-queue' ? { status: 'NEEDS_REVIEW' } : {};
+      this.items = (await this.crm.list(apiResource, params)).items;
       if (this.resource === 'deals') this.stageOptions = (await this.crm.list('pipeline-stages')).items;
     }
     catch { this.error = 'Could not load records.'; }
@@ -103,17 +108,19 @@ export class ResourcePageComponent implements OnInit {
   async persist(value: Record<string, string>, id?: string): Promise<void> {
     try {
       if (id) {
-        const item = await this.crm.update(this.resource, id, value);
+        const item = await this.crm.update(this.resource === 'review-queue' ? 'leads' : this.resource, id, value);
         this.items = this.items.map((current) => current.id === item.id ? item : current);
       } else {
-        const item = await this.crm.create(this.resource, value);
+        const item = await this.crm.create(this.resource === 'review-queue' ? 'leads' : this.resource, value);
         this.items = [item, ...this.items];
       }
     } catch { this.error = id ? 'Could not update record.' : 'Could not create record.'; }
   }
 
   async remove(id: string): Promise<void> {
-    try { await this.crm.remove(this.resource, id); this.items = this.items.filter((item) => item.id !== id); }
+    const item = this.items.find((current) => current.id === id);
+    if (!await firstValueFrom(this.dialog.open(ConfirmDialogComponent, { data: item?.['name'] ?? item?.['title'] ?? 'this record' }).afterClosed())) return;
+    try { await this.crm.remove(this.resource === 'review-queue' ? 'leads' : this.resource, id); this.items = this.items.filter((item) => item.id !== id); }
     catch { this.error = 'Could not delete record.'; }
   }
 }
