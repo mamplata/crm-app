@@ -38,6 +38,26 @@ HubSpot rate limits and temporary server failures retry up to three times.
 
 See [`docs/demo-script.md`](docs/demo-script.md) for a short presentation walkthrough.
 
+## Screenshots
+
+![CRM login](docs/screenshots/login.png)
+
+![CRM dashboard](docs/screenshots/dashboard.png)
+
+![Leads](docs/screenshots/leads.png)
+
+![Review queue](docs/screenshots/review-queue.png)
+
+![Companies](docs/screenshots/companies.png)
+
+![Contacts](docs/screenshots/contacts.png)
+
+![Deals](docs/screenshots/deals.png)
+
+![Tasks](docs/screenshots/tasks.png)
+
+![Automation](docs/screenshots/automation.png)
+
 ## Integrations
 
 - **Meta Messenger:** development-mode Page messages become CRM leads through `/api/meta/webhook`. The test setup uses a temporary HTTPS tunnel; do not use that tunnel for production.
