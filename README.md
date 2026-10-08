@@ -40,21 +40,39 @@ See [`docs/demo-script.md`](docs/demo-script.md) for a short presentation walkth
 
 ## Screenshots
 
+**Login** — Secure entry point for CRM users.
+
 ![CRM login](docs/screenshots/login.png)
+
+**Dashboard** — At-a-glance totals, pipeline charts, and automation health.
 
 ![CRM dashboard](docs/screenshots/dashboard.png)
 
+**Leads** — Browse lead details, AI classification results, and qualification actions.
+
 ![Leads](docs/screenshots/leads.png)
+
+**Review queue** — Leads with low-confidence AI classifications awaiting human review.
 
 ![Review queue](docs/screenshots/review-queue.png)
 
+**Companies** — Manage company records and contact details.
+
 ![Companies](docs/screenshots/companies.png)
+
+**Contacts** — Manage people associated with CRM companies and leads.
 
 ![Contacts](docs/screenshots/contacts.png)
 
+**Deals** — Track opportunities, amounts, statuses, and pipeline stages.
+
 ![Deals](docs/screenshots/deals.png)
 
+**Tasks** — Track follow-up work and due dates.
+
 ![Tasks](docs/screenshots/tasks.png)
+
+**Automation** — Inspect webhook events, failures, retry attempts, and processing status.
 
 ![Automation](docs/screenshots/automation.png)
 
