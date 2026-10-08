@@ -1,0 +1,19 @@
+{
+  "object": "page",
+  "entry": [
+    {
+      "id": "test-page-id",
+      "messaging": [
+        {
+          "sender": { "id": "test-user-id" },
+          "recipient": { "id": "test-page-id" },
+          "timestamp": 1791417600000,
+          "message": {
+            "mid": "m_test_message_001",
+            "text": "Hi, I need urgent pricing for your healthcare software."
+          }
+        }
+      ]
+    }
+  ]
+}

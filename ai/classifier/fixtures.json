@@ -1,0 +1,22 @@
+[
+  {
+    "input": {
+      "name": "Demo Prospect",
+      "message": "We need urgent pricing for a healthcare CRM."
+    },
+    "expected": {
+      "priority": "HIGH",
+      "industry": "HEALTHCARE"
+    }
+  },
+  {
+    "input": {
+      "name": "Student CRM",
+      "message": "Can I see a demo for a small school?"
+    },
+    "expected": {
+      "priority": "MEDIUM",
+      "industry": "EDUCATION"
+    }
+  }
+]

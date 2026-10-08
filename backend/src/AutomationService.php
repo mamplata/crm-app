@@ -12,12 +12,20 @@ final class AutomationService
 
     public function __construct(private PDO $database, private string $webhookUrl) {}
 
-    public function createLead(CrmRepository $repository, array $input): array
+    public function createLead(CrmRepository $repository, array $input, ?string $eventId = null): array
     {
         $this->database->beginTransaction();
         try {
+            if ($eventId !== null) {
+                $existing = $this->database->prepare('SELECT payload FROM webhook_events WHERE event_id = :event_id');
+                $existing->execute(['event_id' => $eventId]);
+                if ($payload = $existing->fetchColumn()) {
+                    $this->database->commit();
+                    return json_decode($payload, true, 512, JSON_THROW_ON_ERROR)['data']['lead'];
+                }
+            }
             $lead = $repository->create('leads', $input);
-            $eventId = self::uuid();
+            $eventId ??= self::uuid();
             $payload = [
                 'event_id' => $eventId,
                 'type' => 'lead.created',
@@ -58,7 +66,7 @@ final class AutomationService
 
     private function dispatchLocked(string $id): array
     {
-        $statement = $this->database->prepare('SELECT * FROM webhook_events WHERE id = :id OR event_id = :event_id FOR UPDATE');
+        $statement = $this->database->prepare('SELECT * FROM webhook_events WHERE id::text = :id OR event_id = :event_id FOR UPDATE');
         $statement->execute(['id' => $id, 'event_id' => $id]);
         $event = $statement->fetch() ?: throw new \DomainException('Webhook event not found.');
         if ($event['status'] === 'PROCESSED') return $this->decode($event);
@@ -70,6 +78,7 @@ final class AutomationService
             $attempts++;
             $lastError = $this->send($payload, $event['event_id']);
             if ($lastError === null) break;
+            if ($attempt + 1 < self::MAX_ATTEMPTS) usleep((2 ** $attempt) * 1_000_000);
         }
         $success = $lastError === null;
         $update = $this->database->prepare(
@@ -82,6 +91,14 @@ final class AutomationService
             'success' => $success ? 1 : 0,
             'id' => $event['id'],
         ]);
+        error_log(json_encode([
+            'event' => 'webhook.delivery',
+            'event_id' => $event['event_id'],
+            'correlation_id' => $event['event_id'],
+            'status' => $success ? 'PROCESSED' : 'FAILED',
+            'attempts' => $attempts,
+            'error' => $success ? null : $lastError,
+        ], JSON_THROW_ON_ERROR));
         return $this->decode($update->fetch());
     }
 

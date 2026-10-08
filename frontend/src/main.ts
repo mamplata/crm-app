@@ -28,6 +28,7 @@ import { AuthService } from './app/auth.service';
           <a routerLink="/crm/contacts" routerLinkActive="active" (click)="menuOpen = false">Contacts</a>
           <a routerLink="/crm/deals" routerLinkActive="active" (click)="menuOpen = false">Deals</a>
           <a routerLink="/crm/tasks" routerLinkActive="active" (click)="menuOpen = false">Tasks</a>
+          <a routerLink="/crm/webhook-events" routerLinkActive="active" (click)="menuOpen = false">Automation</a>
         </nav>
         <button class="menu-toggle" type="button" (click)="menuOpen = !menuOpen" [attr.aria-expanded]="menuOpen">☰ Menu</button>
         <button mat-flat-button color="warn" type="button" (click)="logout()">Log out</button>

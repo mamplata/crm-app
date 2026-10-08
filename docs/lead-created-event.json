@@ -1,0 +1,14 @@
+{
+  "event_id": "f2b2c6dc-6a91-4d1b-9d3b-ef8e0d8e6c11",
+  "type": "lead.created",
+  "version": 1,
+  "occurred_at": "2026-10-08T00:00:00Z",
+  "data": {
+    "lead": {
+      "id": "d6f6f8aa-10e7-4e9c-9e2d-9b9f3c5f4f22",
+      "name": "Demo Prospect",
+      "email": "prospect@example.com",
+      "message": "We need urgent pricing for a healthcare CRM."
+    }
+  }
+}

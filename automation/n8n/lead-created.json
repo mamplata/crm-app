@@ -73,13 +73,43 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1220, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const { event, lead } = $('Validate event').first().json;\nconst { result } = $('Validate classifier result').first().json;\nconst type = result.priority === 'HIGH' ? 'high-priority' : result.confidence < Number($env.CLASSIFICATION_REVIEW_THRESHOLD ?? 0.7) ? 'manual-review' : null;\nif (!type || !$env.DISCORD_WEBHOOK_URL) return [];\nconst state = $getWorkflowStaticData('global');\nstate.notifications ??= {};\nconst key = `${type}:${event.event_id}`;\nif (state.notifications[key]) return [];\nstate.notifications[key] = new Date().toISOString();\nconst title = type === 'high-priority' ? '🚨 High-priority lead' : '🧑‍💼 Manual review required';\nreturn { json: { content: `${title}\\nLead: ${lead.name} (${lead.email ?? 'no email'})\\nSummary: ${result.summary}\\nEvent: ${event.event_id}` } };"
+      },
+      "id": "prepare-discord",
+      "name": "Prepare Discord notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DISCORD_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "Content-Type", "value": "application/json" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.content }) }}",
+        "options": {}
+      },
+      "id": "discord-notification",
+      "name": "Notify Discord",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1700, 300]
     }
   ],
   "connections": {
     "Lead created": { "main": [[{ "node": "Validate event", "type": "main", "index": 0 }]] },
     "Validate event": { "main": [[{ "node": "Classify lead", "type": "main", "index": 0 }]] },
     "Classify lead": { "main": [[{ "node": "Validate classifier result", "type": "main", "index": 0 }]] },
-    "Validate classifier result": { "main": [[{ "node": "Update CRM lead", "type": "main", "index": 0 }]] }
+    "Validate classifier result": { "main": [[{ "node": "Update CRM lead", "type": "main", "index": 0 }]] },
+    "Update CRM lead": { "main": [[{ "node": "Prepare Discord notification", "type": "main", "index": 0 }]] },
+    "Prepare Discord notification": { "main": [[{ "node": "Notify Discord", "type": "main", "index": 0 }]] }
   },
   "active": true,
   "settings": { "executionOrder": "v1" },

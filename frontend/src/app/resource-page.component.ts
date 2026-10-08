@@ -18,6 +18,7 @@ const CONFIG: Record<string, ResourceConfig> = {
   contacts: { title: 'Contacts', fields: ['first_name', 'last_name', 'email', 'phone'], createFields: ['first_name', 'last_name', 'email', 'phone'] },
   leads: { title: 'Leads', fields: ['name', 'email', 'message', 'status', 'priority', 'industry'], createFields: ['name', 'email', 'message'] },
   'review-queue': { title: 'Review queue', fields: ['name', 'message', 'status', 'priority', 'industry', 'intent', 'summary', 'confidence'] },
+  'webhook-events': { title: 'Webhook events', fields: ['event_type', 'status', 'attempts', 'last_error', 'received_at', 'processed_at'] },
   deals: { title: 'Deals', fields: ['name', 'amount', 'status', 'pipeline_stage_id'], createFields: ['name', 'amount', 'pipeline_stage_id'] },
   pipelines: { title: 'Pipelines', fields: ['name'], createFields: ['name'] },
   'pipeline-stages': { title: 'Pipeline stages', fields: ['name', 'position'] },
@@ -46,6 +47,8 @@ const CONFIG: Record<string, ResourceConfig> = {
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let item">
               <button mat-flat-button class="edit-button" type="button" (click)="openForm(item)">Edit</button>
+              @if (resource === 'leads' && item['status'] !== 'QUALIFIED') { <button mat-flat-button class="qualify-button" type="button" (click)="qualify(item.id)">Qualify</button> }
+              @if (resource === 'webhook-events' && item['status'] === 'FAILED') { <button mat-flat-button class="retry-button" type="button" (click)="retry(item.id)">Retry</button> }
               <button mat-flat-button class="delete-button" type="button" (click)="remove(item.id)">Delete</button>
             </td>
           </ng-container>
@@ -115,6 +118,25 @@ export class ResourcePageComponent implements OnInit {
         this.items = [item, ...this.items];
       }
     } catch { this.error = id ? 'Could not update record.' : 'Could not create record.'; }
+  }
+
+  async qualify(id: string): Promise<void> {
+    const lead = this.items.find((item) => item.id === id);
+    const confirmed = await firstValueFrom(this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Qualify lead', message: `Mark ${lead?.['name'] ?? 'this lead'} as qualified?`, confirmLabel: 'Qualify' },
+    }).afterClosed());
+    if (!confirmed) return;
+    try {
+      const item = await this.crm.update('leads', id, { status: 'QUALIFIED' });
+      this.items = this.items.map((current) => current.id === item.id ? item : current);
+    } catch { this.error = 'Could not qualify lead.'; }
+  }
+
+  async retry(id: string): Promise<void> {
+    try {
+      const item = await this.crm.retryWebhook(id);
+      this.items = this.items.map((current) => current.id === item.id ? item : current);
+    } catch { this.error = 'Could not retry webhook.'; }
   }
 
   async remove(id: string): Promise<void> {

@@ -52,6 +52,31 @@ try {
         respond($auth->login(trim((string) ($input['email'] ?? '')), (string) ($input['password'] ?? '')));
     }
 
+    if ($path === '/api/meta/webhook') {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            if (($_GET['hub_verify_token'] ?? '') !== getenv('META_VERIFY_TOKEN') || ($_GET['hub_mode'] ?? '') !== 'subscribe') respond(['error' => 'forbidden'], 403);
+            header('Content-Type: text/plain');
+            echo $_GET['hub_challenge'] ?? '';
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (($input['object'] ?? '') !== 'page') respond(['error' => 'invalid_payload'], 400);
+            $repository = new CrmRepository($database->connection(), (float) (getenv('CLASSIFICATION_REVIEW_THRESHOLD') ?: 0.7));
+            $automation = new AutomationService($database->connection(), (string) getenv('N8N_WEBHOOK_URL'));
+            foreach ($input['entry'] ?? [] as $entry) {
+                foreach ($entry['messaging'] ?? [] as $message) {
+                    $text = trim((string) ($message['message']['text'] ?? ''));
+                    $mid = (string) ($message['message']['mid'] ?? '');
+                    if ($text === '' || $mid === '') continue;
+                    $sender = (string) ($message['sender']['id'] ?? 'unknown');
+                    $automation->createLead($repository, ['name' => "Facebook user $sender", 'message' => $text], "meta:$mid");
+                }
+            }
+            respond(['received' => true]);
+        }
+        respond(['error' => 'method_not_allowed'], 405);
+    }
+
     if ($path === '/api/me' && $_SERVER['REQUEST_METHOD'] === 'GET') {
         preg_match('/Bearer\s+(\S+)/i', $_SERVER['HTTP_AUTHORIZATION'] ?? '', $matches);
         $user = isset($matches[1]) ? $auth->userFromToken($matches[1]) : null;

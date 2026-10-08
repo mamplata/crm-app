@@ -42,6 +42,8 @@ h1 { color: #172033; font-size: 28px; margin: 0; }
 .analytics-card h2 { font-size: 18px; margin: 0 0 20px; }
 .analytics-chart { height: 260px; position: relative; }
 .analytics-chart canvas { height: 100% !important; width: 100% !important; }
+.mini-table { border: 0; border-radius: 0; font-size: 13px; margin-top: 16px; }
+.mini-table td { padding: 8px; }
 
 .resource-page form {
   align-items: center;
@@ -66,7 +68,7 @@ table {
 th, td { border-bottom: 1px solid #e2e8f0; padding: 13px 16px; text-align: left; }
 th { background: #eff6ff; color: #1e3a8a; font-size: 13px; text-transform: capitalize; }
 tr:last-child td { border-bottom: 0; }
-td button { background: #dc2626; min-height: 32px; padding: 5px 10px; }
+td button { background: #dc2626; font-size: 12px; min-height: 30px; padding: 4px 9px; }
 td button:hover { background: #b91c1c; }
 .resource-page td:last-child { white-space: nowrap; }
 .page-heading { align-items: center; display: flex; justify-content: space-between; margin-bottom: 20px; }
@@ -79,9 +81,13 @@ td button:hover { background: #b91c1c; }
 .resource-page table { width: 100%; }
 .edit-button { background: #16a34a !important; color: #fff !important; }
 .edit-button:hover { background: #15803d !important; }
+.qualify-button { background: #2563eb !important; color: #fff !important; }
+.qualify-button:hover { background: #1d4ed8 !important; }
+.retry-button { background: #7c3aed !important; color: #fff !important; }
+.retry-button:hover { background: #6d28d9 !important; }
 .delete-button { background: #dc2626 !important; color: #fff !important; }
 .delete-button:hover { background: #b91c1c !important; }
-.edit-button + .delete-button { margin-left: 8px; }
+td button + button { margin-left: 6px; }
 .error { color: #b91c1c; }
 
 @media (max-width: 900px) {

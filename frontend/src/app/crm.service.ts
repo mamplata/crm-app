@@ -37,6 +37,12 @@ export class CrmService {
     this.clearCache(resource);
   }
 
+  async retryWebhook(id: string): Promise<CrmItem> {
+    const response = await firstValueFrom(this.api.post<{ item: CrmItem }>(`webhook-events/${id}?action=retry`, {}));
+    this.clearCache('webhook-events');
+    return response.item;
+  }
+
   private clearCache(resource: string): void {
     for (const key of this.cache.keys()) if (key.startsWith(`${resource}?`)) this.cache.delete(key);
   }

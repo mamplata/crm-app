@@ -229,14 +229,14 @@ A qualified CRM lead can create/update corresponding HubSpot records.
 
 ---
 
-# Milestone 11 — Notification Integration
+# Milestone 11 — Notification Integration (Discord)
 
 Choose Telegram or Discord.
 
-- [ ] High-priority lead notification.
-- [ ] Automation-failure notification.
-- [ ] Manual-review notification.
-- [ ] Prevent duplicate notifications.
+- [x] High-priority lead notification.
+- [x] Automation-failure notification.
+- [x] Manual-review notification.
+- [x] Prevent duplicate notifications.
 
 Acceptance:
 Relevant workflow events produce one clear external notification.
@@ -245,14 +245,14 @@ Relevant workflow events produce one clear external notification.
 
 # Milestone 12 — Reliability
 
-- [ ] Exponential retry/backoff.
-- [ ] Max retry policy.
-- [ ] Manual replay endpoint/UI.
-- [ ] Idempotent callbacks.
-- [ ] Duplicate webhook handling.
-- [ ] Integration timeout handling.
-- [ ] Structured logs.
-- [ ] Correlation IDs.
+- [x] Exponential retry/backoff.
+- [x] Max retry policy.
+- [x] Manual replay endpoint/UI.
+- [x] Idempotent callbacks.
+- [x] Duplicate webhook handling.
+- [x] Integration timeout handling.
+- [x] Structured logs.
+- [x] Correlation IDs.
 
 Acceptance:
 Intentionally breaking an external integration produces a recoverable FAILED state.
@@ -262,13 +262,13 @@ Intentionally breaking an external integration produces a recoverable FAILED sta
 # Milestone 13 — Dashboard / Observability
 
 Dashboard metrics:
-- [ ] total leads
-- [ ] high-priority leads
-- [ ] automation success count
-- [ ] automation failure count
-- [ ] manual review count
-- [ ] recent automation runs
-- [ ] average automation duration
+- [x] total leads
+- [x] high-priority leads
+- [x] automation success count
+- [x] automation failure count
+- [x] manual review count
+- [x] recent automation runs
+- [x] average automation duration
 
 Acceptance:
 User can understand current automation health without opening n8n.
@@ -277,18 +277,18 @@ User can understand current automation health without opening n8n.
 
 # Milestone 14 — Portfolio Readiness
 
-- [ ] Demo seed data.
-- [ ] Clean README.
-- [ ] Architecture diagram.
-- [ ] Setup instructions.
+- [x] Demo seed data.
+- [x] Clean README.
+- [x] Architecture diagram.
+- [x] Setup instructions.
 - [ ] Screenshots.
-- [ ] Example webhook payloads.
-- [ ] n8n workflow export.
-- [ ] Example classifier fixtures.
-- [ ] Explain design decisions.
-- [ ] Explain AI limitations.
-- [ ] Explain retry/idempotency design.
-- [ ] Add sample demo script / walkthrough.
+- [x] Example webhook payloads.
+- [x] n8n workflow export.
+- [x] Example classifier fixtures.
+- [x] Explain design decisions.
+- [x] Explain AI limitations.
+- [x] Explain retry/idempotency design.
+- [x] Add sample demo script / walkthrough.
 
 Final demo:
 1. Create lead.
@@ -300,3 +300,21 @@ Final demo:
 7. automation history appears.
 8. simulate failure.
 9. retry successfully.
+
+---
+
+# Milestone 15 — Meta Messenger Test Integration
+
+Development-mode testing only; no paid ads required.
+
+- [x] Create a test Facebook Page.
+- [x] Create a Meta developer app in Development mode.
+- [x] Configure Page access and test-user permissions.
+- [x] Add a public HTTPS webhook endpoint.
+- [x] Receive Page Messenger messages.
+- [x] Convert messages into CRM leads.
+- [x] Preserve sender/message metadata.
+- [x] Test AI classification and Discord notification from a Messenger inquiry.
+
+Acceptance:
+A test user can message the Facebook Page and the CRM creates one lead from the inquiry.

@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -10,7 +11,7 @@ type AnalyticsRow = { label: string; count: number; percent: number };
 
 @Component({
   standalone: true,
-  imports: [MatCardModule, MatProgressBarModule, RouterLink],
+  imports: [DatePipe, MatCardModule, MatProgressBarModule, RouterLink],
   template: `
     <section class="dashboard">
       <div class="page-heading"><div><h1>Dashboard</h1><span>CRM overview</span></div></div>
@@ -25,6 +26,12 @@ type AnalyticsRow = { label: string; count: number; percent: number };
           </a>
         }
       </div>
+      <div class="dashboard-grid observability-grid">
+        <article class="dashboard-card"><span>High-priority leads</span><strong>{{ highPriorityLeads }}</strong><small>Needs attention</small></article>
+        <article class="dashboard-card"><span>Automation success</span><strong>{{ automationSuccess }}</strong><small>Processed events</small></article>
+        <article class="dashboard-card"><span>Automation failures</span><strong>{{ automationFailures }}</strong><small>Needs replay</small></article>
+        <article class="dashboard-card"><span>Manual review</span><strong>{{ manualReviews }}</strong><small>Needs decision</small></article>
+      </div>
       <div class="analytics-grid">
         <article class="analytics-card">
           <h2>Lead pipeline</h2>
@@ -33,6 +40,17 @@ type AnalyticsRow = { label: string; count: number; percent: number };
         <article class="analytics-card">
           <h2>Deal outcomes</h2>
           <div class="analytics-chart"><canvas #dealChart></canvas></div>
+        </article>
+        <article class="analytics-card">
+          <h2>Automation health</h2>
+          <p>Average duration: <strong>{{ averageAutomationDuration }}</strong></p>
+          @if (recentAutomationEvents.length) {
+            <table class="mini-table"><tbody>
+              @for (event of recentAutomationEvents; track event['id']) {
+                <tr><td>{{ event['event_type'] }}</td><td>{{ event['status'] }}</td><td>{{ event['received_at'] | date:'short' }}</td></tr>
+              }
+            </tbody></table>
+          } @else { <p>No automation events yet.</p> }
         </article>
       </div>
     </section>
@@ -52,6 +70,12 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   error = '';
   leadStatus: AnalyticsRow[] = [];
   dealStatus: AnalyticsRow[] = [];
+  highPriorityLeads = 0;
+  automationSuccess = 0;
+  automationFailures = 0;
+  manualReviews = 0;
+  averageAutomationDuration = '—';
+  recentAutomationEvents: CrmItem[] = [];
   private viewReady = false;
   private leadChart?: Chart;
   private dealChart?: Chart;
@@ -65,10 +89,19 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     try {
-      const results = await Promise.all(this.stats.map((stat) => this.crm.list(stat.resource)));
+      const [results, events] = await Promise.all([
+        Promise.all(this.stats.map((stat) => this.crm.list(stat.resource))),
+        this.crm.list('webhook-events'),
+      ]);
       results.forEach((result, index) => { this.stats[index].total = result.total; });
       this.leadStatus = this.chart(results[2].items, 'status', ['NEW', 'QUALIFIED', 'DISQUALIFIED', 'CONVERTED']);
       this.dealStatus = this.chart(results[3].items, 'status', ['OPEN', 'WON', 'LOST']);
+      this.highPriorityLeads = results[2].items.filter((item) => item['priority'] === 'HIGH').length;
+      this.manualReviews = results[2].items.filter((item) => item['status'] === 'NEEDS_REVIEW').length;
+      this.automationSuccess = events.items.filter((item) => item['status'] === 'PROCESSED').length;
+      this.automationFailures = events.items.filter((item) => item['status'] === 'FAILED').length;
+      this.recentAutomationEvents = events.items.slice(0, 5);
+      this.averageAutomationDuration = this.averageDuration(events.items);
     } catch {
       this.error = 'Could not load dashboard totals.';
     } finally {
@@ -86,6 +119,15 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     const counts = labels.map((label) => items.filter((item) => item[field] === label).length);
     const max = Math.max(1, ...counts);
     return labels.map((label, index) => ({ label, count: counts[index], percent: counts[index] / max * 100 }));
+  }
+
+  private averageDuration(events: CrmItem[]): string {
+    const durations = events.flatMap((event) => {
+      const start = Date.parse(String(event['received_at'] ?? ''));
+      const end = Date.parse(String(event['processed_at'] ?? ''));
+      return Number.isFinite(start) && Number.isFinite(end) && end >= start ? [end - start] : [];
+    });
+    return durations.length ? `${Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length)} ms` : '—';
   }
 
   private renderCharts(): void {
