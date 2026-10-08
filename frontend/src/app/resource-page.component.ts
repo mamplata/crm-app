@@ -31,7 +31,7 @@ const CONFIG: Record<string, ResourceConfig> = {
   imports: [CommonModule, MatButtonModule, MatCardModule, MatDialogModule, MatProgressBarModule, MatTableModule],
   template: `
     <section class="resource-page">
-      <div class="page-heading"><h1>{{ config.title }}</h1><span>{{ items.length }} records</span>@if (config.createFields) { <button mat-flat-button color="primary" class="add-button" (click)="openForm()">Add</button> }</div>
+      <div class="page-heading"><h1>{{ config.title }}</h1><span>{{ total }} records</span>@if (config.createFields) { <button mat-flat-button color="primary" class="add-button" (click)="openForm()">Add</button> }</div>
       @if (loading) { <mat-progress-bar mode="indeterminate" /> }
       @if (error) { <p class="error" role="alert">{{ error }}</p> }
       @if (!loading && !error && !items.length) { <mat-card><mat-card-content>No records yet.</mat-card-content></mat-card> }
@@ -55,6 +55,13 @@ const CONFIG: Record<string, ResourceConfig> = {
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
+        @if (total > 0) {
+          <div class="pagination" aria-label="Pagination">
+            <button mat-stroked-button type="button" (click)="goToPage(page - 1)" [disabled]="page === 1">Previous</button>
+            <span>Page {{ page }} of {{ totalPages }}</span>
+            <button mat-stroked-button type="button" (click)="goToPage(page + 1)" [disabled]="page === totalPages">Next</button>
+          </div>
+        }
       }
     </section>
   `,
@@ -68,6 +75,9 @@ export class ResourcePageComponent implements OnInit {
   displayedColumns: string[] = [];
   stageOptions: CrmItem[] = [];
   requiredFields: string[] = [];
+  page = 1;
+  readonly perPage = 5;
+  total = 0;
 
   constructor(private readonly route: ActivatedRoute, private readonly crm: CrmService, private readonly dialog: MatDialog) {}
 
@@ -77,6 +87,7 @@ export class ResourcePageComponent implements OnInit {
       this.config = CONFIG[this.resource] ?? CONFIG.companies;
       this.displayedColumns = [...this.config.fields, 'actions'];
       this.stageOptions = [];
+      this.page = 1;
       this.requiredFields = this.resource === 'contacts' ? ['first_name', 'last_name']
         : this.resource === 'leads' ? ['name', 'message']
         : this.resource === 'deals' ? ['name', 'pipeline_stage_id']
@@ -91,12 +102,23 @@ export class ResourcePageComponent implements OnInit {
     this.error = '';
     try {
       const apiResource = this.resource === 'review-queue' ? 'leads' : this.resource;
-      const params: Record<string, string> = this.resource === 'review-queue' ? { status: 'NEEDS_REVIEW' } : {};
-      this.items = (await this.crm.list(apiResource, params)).items;
+      const params: Record<string, string> = { page: String(this.page), per_page: String(this.perPage) };
+      if (this.resource === 'review-queue') params.status = 'NEEDS_REVIEW';
+      const result = await this.crm.list(apiResource, params);
+      this.items = result.items;
+      this.total = result.total;
       if (this.resource === 'deals') this.stageOptions = (await this.crm.list('pipeline-stages')).items;
     }
     catch { this.error = 'Could not load records.'; }
     finally { this.loading = false; }
+  }
+
+  get totalPages(): number { return Math.max(1, Math.ceil(this.total / this.perPage)); }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.page = page;
+    void this.load();
   }
 
   openForm(item?: CrmItem): void {
